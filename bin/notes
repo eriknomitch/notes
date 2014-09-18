@@ -1,0 +1,75 @@
+#!/bin/zsh
+
+# ================================================
+# NOTES ==========================================
+# ================================================
+
+# ------------------------------------------------
+# UTILITY ----------------------------------------
+# ------------------------------------------------
+function _edit_note()
+{   
+  _notes_filename=$1
+
+  # Synchronize down from default remote.
+  echo "Synchronizing $NOTES_DIR via Git... "
+  git pull
+
+  if [[ $? != 0 ]] ; then
+    echo "fatal: Synchronization from default remote failed.  Fix the conflicts in '$NOTES_DIR'."
+    exit 1
+  fi
+
+  # Edit the notes file.
+  $EDITOR "$NOTES_DIR/$_notes_filename"
+
+  # Once finished, make sure that note file is tracked if we created it.
+  git add "$_notes_filename"
+
+  # Generically commit and push.
+  git commit --all --message "Edits '$_notes_filename' note."
+
+  if [[ $? == 0 ]] ; then
+    git push
+  fi
+}
+
+# ------------------------------------------------
+# MAIN -------------------------------------------
+# ------------------------------------------------
+: ${EDITOR:?"fatal: Need to set EDITOR environment variable (non-empty)."}
+
+# Default to ~/.notes
+if [[ -z $NOTES_DIR ]] ; then
+  NOTES_DIR="$HOME/.notes"
+fi
+
+# Ensure NOTES_DIR is a directory.
+if [[ ! -d $NOTES_DIR ]] ; then
+  echo "fatal: '$NOTES_DIR' does not exist or is not a directory."
+  exit 1
+fi
+
+cd $NOTES_DIR
+
+# Ensure NOTES_DIR is a Git repository.
+if [[ ! -d .git ]] ; then
+  echo "fatal: '$NOTES_DIR' is not a Git repository."
+  exit 1
+fi
+
+# Default to the 'notes' file.
+if [[ -z "$1" ]] ; then
+  _edit_note notes
+else
+  case "$1" in
+    ls)
+      ls -1 $NOTES_DIR
+      ;;
+    *)
+      _edit_note $1
+      ;;
+  esac
+fi
+
+
