@@ -1,4 +1,5 @@
 # Notes
+A simple Zsh script to edit and manage synchronized notes (via a Git repository) on one or across many machines. [See the source](bin/notes).
 
 ## Installation
 Clone the repository somewhere (e.g., `~/.src/notes`) and add `source $HOME/.src/notes/notes.zsh` to your `~/.zshrc`.
