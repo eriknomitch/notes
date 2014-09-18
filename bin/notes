@@ -27,7 +27,7 @@ function _edit_note()
   git add "$_notes_filename"
 
   # Generically commit and push.
-  git commit --all --message "Edits '$_notes_filename' note."
+  git commit --all --message "Edits '$_notes_filename' note"
 
   if [[ $? == 0 ]] ; then
     git push
