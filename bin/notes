@@ -12,13 +12,13 @@ function _edit_note()
   _notes_filename=$1
 
   # Synchronize down from default remote.
-  echo "Synchronizing $NOTES_DIR via Git... "
-  git pull
+  #echo "Synchronizing $NOTES_DIR via Git... "
+  #git pull
 
-  if [[ $? != 0 ]] ; then
-    echo "fatal: Synchronization from default remote failed.  Fix the conflicts in '$NOTES_DIR'."
-    exit 1
-  fi
+  #if [[ $? != 0 ]] ; then
+    #echo "fatal: Synchronization from default remote failed.  Fix the conflicts in '$NOTES_DIR'."
+    #exit 1
+  #fi
 
   # Edit the notes file.
   $EDITOR "$NOTES_DIR/$_notes_filename"
@@ -31,6 +31,11 @@ function _edit_note()
 
   if [[ $? == 0 ]] ; then
     git push
+  fi
+  
+  if [[ $? != 0 ]] ; then
+    echo "error: git push failed '$NOTES_DIR'."
+    exit 1
   fi
 }
 
