@@ -30,13 +30,14 @@ function _edit_note()
   git commit --all --message "Edits '$_notes_filename' note"
 
   if [[ $? == 0 ]] ; then
-    git push
+    echo "Synchronizing..."
+    git push > /dev/null 2>&1 &
   fi
   
-  if [[ $? != 0 ]] ; then
-    echo "error: git push failed '$NOTES_DIR'."
-    exit 1
-  fi
+  #if [[ $? != 0 ]] ; then
+    #echo "error: git push failed '$NOTES_DIR'."
+    #exit 1
+  #fi
 }
 
 # ------------------------------------------------
