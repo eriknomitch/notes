@@ -23,6 +23,10 @@ function _edit_note()
   # Edit the notes file.
   $EDITOR "$NOTES_DIR/$_notes_filename"
 
+  if ( ! `git ls-files $1 --error-unmatch &>/dev/null` ) ; then
+    exit $?
+  fi
+
   # Once finished, make sure that note file is tracked if we created it.
   git add "$_notes_filename"
 
