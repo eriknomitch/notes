@@ -8,22 +8,42 @@
 # UTILITY ----------------------------------------
 # ------------------------------------------------
 function _edit_note()
-{   
+{
   _notes_filename=$1
+  shift
+  _note_to_append="$*"
 
-  # Synchronize down from default remote.
-  #echo "Synchronizing $NOTES_DIR via Git... "
-  #git pull
+  # Prepend
+  # ----------------------------------------------
+  if [[ -n $_note_to_append ]] ; then
+    if prepend "$NOTES_DIR/$_notes_filename" $_note_to_append ; then
+      echo "Prepended $_notes_filename."
+    else
+      echo "fatal: Could not prepend notes file '$_notes_filename'."
+      exit 1
+    fi
 
-  #if [[ $? != 0 ]] ; then
-    #echo "fatal: Synchronization from default remote failed.  Fix the conflicts in '$NOTES_DIR'."
-    #exit 1
-  #fi
+  # Edit
+  # ----------------------------------------------
+  else
+    # Synchronize down from default remote.
+    #echo "Synchronizing $NOTES_DIR via Git... "
+    #git pull
 
-  # Edit the notes file.
-  $EDITOR "$NOTES_DIR/$_notes_filename"
+    #if [[ $? != 0 ]] ; then
+      #echo "fatal: Synchronization from default remote failed.  Fix the conflicts in '$NOTES_DIR'."
+      #exit 1
+    #fi
 
-  if ( ! `git ls-files $1 --error-unmatch &>/dev/null` ) ; then
+    # Edit the notes file.
+    $EDITOR "$NOTES_DIR/$_notes_filename"
+  fi
+
+  # Commit
+  # ----------------------------------------------
+
+  # Ignore untracked files
+  if ( ! `git ls-files $_notes_filename --error-unmatch &>/dev/null` ) ; then
     exit $?
   fi
 
@@ -33,6 +53,8 @@ function _edit_note()
   # Generically commit and push.
   git commit --all --message "Edits '$_notes_filename' note"
 
+  # Sync Up
+  # ----------------------------------------------
   if [[ $? == 0 ]] ; then
     echo "Synchronizing..."
     git push > /dev/null 2>&1 &
@@ -73,11 +95,11 @@ if [[ -z "$1" ]] ; then
   _edit_note notes
 else
   case "$1" in
-    ls)
+    --ls)
       ls -1 $NOTES_DIR
       ;;
     *)
-      _edit_note $1
+      _edit_note $*
       ;;
   esac
 fi
