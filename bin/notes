@@ -16,7 +16,7 @@ function _edit_note()
   # Prepend
   # ----------------------------------------------
   if [[ -n $_note_to_append ]] ; then
-    if prepend "$NOTES_DIR/$_notes_filename" $_note_to_append ; then
+    if notes-prepend "$NOTES_DIR/$_notes_filename" $_note_to_append ; then
       echo "Prepended $_notes_filename."
     else
       echo "fatal: Could not prepend notes file '$_notes_filename'."
