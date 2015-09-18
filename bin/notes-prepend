@@ -1,56 +1,67 @@
 #!/bin/zsh
+# ================================================
+# PREPEND ========================================
+# ================================================
+# Prepends a string to a target file
 
+# ------------------------------------------------
+# TRAP->TERM -------------------------------------
+# ------------------------------------------------
+trap "exit 1" TERM
+
+local TOP_PID=$$
+
+# ------------------------------------------------
+# UTILITY ----------------------------------------
+# ------------------------------------------------
+function _exit_fatal() {
+  echo "fatal: $1"
+  kill -s TERM $TOP_PID
+}
+
+# ------------------------------------------------
+# MAIN -------------------------------------------
+# ------------------------------------------------
+#
 # Validate target file
 # ------------------------------------------------
 local _target=$1
 
-if [[ -z $_target ]] ; then
-  echo "fatal: Did not pass a target file to prepend."
-  exit 1
+if [ $# -lt 1 ] ; then
+  _exit_fatal "No target file given."
 fi
 
-if [[ ! -f $_target ]] ; then
-  echo "fatal: The target '$_target' is not a file."
-  exit 1
-fi
+test -e $_target || _exit_fatal "The target '$_target' does not exist."
+test -f $_target || _exit_fatal "The target '$_target' is not a file."
+test -w $_target || _exit_fatal "The target '$_target' is not writable."
 
-if [[ ! -w $_target ]] ; then
-  echo "fatal: The target file '$_target' is not a writable file."
-  exit 1
+# Validate string(s) to prepend
+# ------------------------------------------------
+if [ $# -lt 2 ] ; then
+  _exit_fatal "No string(s) given to prepend to target file given."
 fi
 
 shift
 
-# Validate string to prepend argument
-# ------------------------------------------------
 local _to_prepend="$*"
 
-if [[ -z $_to_prepend ]] ; then
-  echo "fatal: You did not pass anything to prepend."
-  exit 1
-fi
-
-# Create the temporary file with mktemp
+# Create a temporary file for merger
 # ------------------------------------------------
-local _basename=`basename $0`
-local _temporary_file_path=`mktemp "/tmp/$_basename.XXXX"`
+local _temporary_file_path=`mktemp "/tmp/\`basename $0\`.XXXX"`
 
 if [[ $? != 0 ]] ; then
-  echo "fatal: Could not create temporary file in '/tmp'."
-  exit 1
+  _exit_fatal "Could not create a temporary file in '/tmp' with mktemp."
 fi
 
-# Prepend/merge to the temporary file
+# Prepend/merge the temporary file
 # ------------------------------------------------
 if ! ( echo $_to_prepend >> $_temporary_file_path && cat $_target >> $_temporary_file_path ) ; then
-  echo "fatal: Could not prepend the inputs to the temporary file at '$_temporary_file_path'."
-  exit 1
+  _exit_fatal "Could not prepend the inputs to the temporary file at '$_temporary_file_path'."
 fi
 
 # Overwrite the original target
 # ------------------------------------------------
 if ! mv $_temporary_file_path $_target ; then
-  echo "fatal: Could not move/overwrite the original target file at '$_target' with the temporary file at '$_temporary_file_path'."
-  exit 1
+  _exit_fatal "Could not move/overwrite the original target file at '$_target' with the temporary file at '$_temporary_file_path'."
 fi
 
