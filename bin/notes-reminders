@@ -11,41 +11,12 @@
 # ------------------------------------------------
 # MAIN -------------------------------------------
 # ------------------------------------------------
-grep -E "^REM" $HOME/.notes/notes
+_matches=`grep -E "^REM" $HOME/.notes/notes`
 
-#: ${EDITOR:?"fatal: Need to set EDITOR environment variable (non-empty)."}
+if [[ $# -gt 0 ]] ; then
+  echo $_matches | \grep -i --color $1
+  exit
+fi
 
-# Default to ~/.notes
-#if [[ -z $NOTES_DIR ]] ; then
-  #NOTES_DIR="$HOME/.notes"
-#fi
-
-## Ensure NOTES_DIR is a directory.
-#if [[ ! -d $NOTES_DIR ]] ; then
-  #echo "fatal: '$NOTES_DIR' does not exist or is not a directory."
-  #exit 1
-#fi
-
-#cd $NOTES_DIR
-
-## Ensure NOTES_DIR is a Git repository.
-#if [[ ! -d .git ]] ; then
-  #echo "fatal: '$NOTES_DIR' is not a Git repository."
-  #exit 1
-#fi
-
-## Default to the 'notes' file.
-##if [[ -z "$1" ]] ; then
-  ##_edit_note notes
-##else
-  ##case "$1" in
-    ##--ls)
-      ##ls -1 $NOTES_DIR
-      ##;;
-    ##*)
-      ##_edit_note $*
-      ##;;
-  ##esac
-##fi
-
+echo $_matches
 
