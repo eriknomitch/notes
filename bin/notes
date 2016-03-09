@@ -51,7 +51,8 @@ function _edit_note()
   git add "$_notes_filename"
 
   # Generically commit and push.
-  git commit --all --message "Edits '$_notes_filename' note"
+  #git commit --all --message "Edits '$_notes_filename' note" > /dev/null 2>&1 || echo "fatal: There was a problem committing." && exit 1
+  git commit --all --message "Edits '$_notes_filename' note" > /dev/null 2>&1
 
   # Sync Up
   # ----------------------------------------------
@@ -95,7 +96,7 @@ if [[ -z "$1" ]] ; then
   _edit_note notes
 else
   case "$1" in
-    --ls)
+    --ls|--list)
       ls -1 $NOTES_DIR
       ;;
     *)
