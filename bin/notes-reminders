@@ -11,7 +11,16 @@
 # ------------------------------------------------
 # MAIN -------------------------------------------
 # ------------------------------------------------
-_matches=`grep -E "^REM" $HOME/.notes/notes`
+
+# FIX: DRY
+# Default to ~/.notes
+if [[ -z $NOTES_DIR ]] ; then
+  NOTES_DIR="$HOME/.notes"
+fi
+
+cd $NOTES_DIR
+
+_matches=`git grep -E "^REM"`
 
 if [[ $# -gt 0 ]] ; then
   echo $_matches | \grep -i --color $1
