@@ -99,10 +99,13 @@ else
     --ls|--list)
       ls -1 $NOTES_DIR
       ;;
+    --grep|-g)
+      cd $NOTES_DIR
+      \grep -HiRe $2 ./*
+      ;;
     *)
       _edit_note $*
       ;;
   esac
 fi
-
 
