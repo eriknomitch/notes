@@ -101,7 +101,7 @@ else
       ;;
     --grep|-g)
       cd $NOTES_DIR
-      \grep -HiRe $2 ./*
+      \grep --color -HiRe $2 *
       ;;
     *)
       _edit_note $*
