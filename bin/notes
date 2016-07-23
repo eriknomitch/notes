@@ -42,13 +42,13 @@ function _edit_note()
   # Commit
   # ----------------------------------------------
 
-  # Ignore untracked files
-  if ( ! `git ls-files $_notes_filename --error-unmatch &>/dev/null` ) ; then
+  # Add all in case the user made a new notes file
+  git add .
+  
+  # Exit if they edited an ignored file
+  if  ! git ls-files $_notes_filename --error-unmatch &>/dev/null ; then
     exit $?
   fi
-
-  # Once finished, make sure that note file is tracked if we created it.
-  git add "$_notes_filename"
 
   # Generically commit and push.
   #git commit --all --message "Edits '$_notes_filename' note" > /dev/null 2>&1 || echo "fatal: There was a problem committing." && exit 1
