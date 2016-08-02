@@ -57,8 +57,9 @@ function _edit_note()
   # Sync Up
   # ----------------------------------------------
   if [[ $? == 0 ]] ; then
-    echo "Synchronizing..."
-    git push > /dev/null 2>&1 &
+    echo -n "Synchronizing..."
+    git push > /dev/null 2>&1 && \
+    echo -e "\033[1K"
   fi
   
   #if [[ $? != 0 ]] ; then
